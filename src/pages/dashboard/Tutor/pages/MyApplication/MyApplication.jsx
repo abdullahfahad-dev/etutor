@@ -117,19 +117,25 @@ const MyApplication = () => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedApplication, setSelectedApplication] = useState(null);
     useEffect(() => {
-        secureAxios.get('/api/tutor/my-applications').then(response => {
-            if (response?.data?.success) {
-                setApplications(response?.data?.data?.map(item => ({
-                    id: item?._id,
-                    jobTitle: item?.tutions?.title,
-                    date: item?.createdAt ? new Date(item.createdAt).toLocaleDateString('en-BD') : null,
-                    salary: item?.salary,
-                    status: item?.status
-                })))
-            }
-            setLoading(false)
-        })
-    }, [])
+        secureAxios.get('/api/tutor/my-applications')
+            .then(response => {
+                if (response?.data?.success) {
+                    setApplications(response?.data?.data?.map(item => ({
+                        id: item?._id,
+                        jobTitle: item?.tutions?.title,
+                        date: item?.createdAt ? new Date(item.createdAt).toLocaleDateString('en-BD') : null,
+                        salary: item?.salary,
+                        status: item?.status
+                    })));
+                }
+            })
+            .catch(error => {
+                console.error("Failed to fetch applications:", error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, []);
     const onDelete = (id) => {
         secureAxios.delete(`/api/tutor/my-applications/delete/${id}`).then(response => {
             if(response?.data?.success){

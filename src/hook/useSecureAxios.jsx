@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import useAuth from "./useAuth";
 
 const secureAxios = axios.create({
@@ -8,21 +8,29 @@ const secureAxios = axios.create({
 
 export default function useSecureAxios() {
     const { user, loading: userLoading } = useAuth();
-    const [loading, setLoading] = useState(true)
-    useEffect(() => {
-        const requestIntercepter = secureAxios.interceptors.request.use(function (config) {
-            config.headers.Authorization = `Bearer ${user?.accessToken}`
-            return config;
-        })
-        setLoading(false)
-        return () => {
-            secureAxios.interceptors.request.eject(requestIntercepter)
-        }
-    }, [user, userLoading])
 
+    useEffect(() => {
+        const requestIntercepter = secureAxios.interceptors.request.use(async function (config) {
+            if (user) {
+                try {
+                    const token = await user.getIdToken();
+                    config.headers.Authorization = `Bearer ${token}`;
+                } catch {
+                    if (user.accessToken) {
+                        config.headers.Authorization = `Bearer ${user.accessToken}`;
+                    }
+                }
+            }
+            return config;
+        });
+
+        return () => {
+            secureAxios.interceptors.request.eject(requestIntercepter);
+        };
+    }, [user, userLoading]);
 
     return {
         secureAxios,
-        loading
+        loading: userLoading
     };
 }

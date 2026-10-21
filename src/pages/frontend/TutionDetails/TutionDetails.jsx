@@ -9,10 +9,10 @@ import { useForm } from "react-hook-form";
 
 
 const ApplyModal = ({ isOpen, onClose, jobInfo, user }) => {
-    if (!isOpen) return null;
     const {secureAxios} = useSecureAxios();
-
     const { handleSubmit, register, formState: { errors } } = useForm();
+
+    if (!isOpen) return null;
 
     const tutorData = {
         name: user?.displayName,

@@ -1,14 +1,13 @@
+import { motion } from "framer-motion";
 import { useState } from "react";
-import { motion } from "motion/react"
 import { Link } from "react-router";
 import { useForm } from "react-hook-form";
-import axios from "axios";
 import useAuth from "../../../hook/useAuth";
 import Swal from "sweetalert2";
 import useSecureAxios from "../../../hook/useSecureAxios";
 const Login = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const { handleSubmit, register, formState: { errors } } = useForm();
+    const { handleSubmit, register } = useForm();
     const { loginUsingCredintial, loginWithGoogle } = useAuth();
 
     const { secureAxios } = useSecureAxios();

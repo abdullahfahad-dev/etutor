@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import useAuth from "../../hook/useAuth";
+import Swal from "sweetalert2";
 
 export function Header() {
     const { user, loading: userLoading, logout, userRole } = useAuth();

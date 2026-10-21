@@ -1,9 +1,8 @@
-import { motion } from "motion/react"
+import { motion } from "framer-motion";
 import { useState } from "react";
 import { Link } from "react-router";
 import useAuth from "../../../hook/useAuth";
 import { useForm } from "react-hook-form";
-import axios from "axios";
 import Swal from "sweetalert2";
 import useSecureAxios from "../../../hook/useSecureAxios";
 const Register = () => {
@@ -30,7 +29,8 @@ const Register = () => {
                     if(response?.data?.success){
                         Swal.fire('Success', 'Registration successfully', 'success')
                         console.log(result?.resposne?.user, 'this is user information')
-                        setUser(result?.resposne?.user)
+                        const resolvedUser = result?.response?.user || result?.resposne?.user;
+                        setUser(resolvedUser)
                         setUserRole(role)
                     }else{
                         Swal.fire('Error', response?.data?.message, 'error')

@@ -13,19 +13,15 @@ export function useCheckRole() {
     let isMounted = true;
 
     if (!axiosLoading) {
-      setLoading(true);
-      setError(null);
-
       secureAxios.get('/api/user/role-check')
         .then(response => {
           if (!isMounted) return;
           if (response?.data?.success) {
             setData(response.data);
-            setLoading(false);
           } else {
             setData(null);
-            setLoading(false);
           }
+          setLoading(false);
         })
         .catch(err => {
           if (!isMounted) return;
@@ -33,12 +29,11 @@ export function useCheckRole() {
           setLoading(false);
           setData(null);
         });
-        
-    return () => {
-      isMounted = false;
-    };
-    }
 
+      return () => {
+        isMounted = false;
+      };
+    }
   }, [secureAxios, axiosLoading]);
 
 
