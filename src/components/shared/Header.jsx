@@ -134,9 +134,28 @@ export function Header() {
                                         {isProfileOpen && (
                                             <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 overflow-hidden animate-fade-in-down">
                                                 <div className="px-4 py-3 border-b border-gray-50 bg-gray-50/50">
-                                                    <p className="text-sm font-bold text-gray-800">{user?.displayName}</p>
+                                                    <p className="text-sm font-bold text-gray-800">{user?.displayName || "User"}</p>
                                                     <p className="text-xs text-gray-500">{user?.email}</p>
+                                                    <span className="inline-block mt-1 text-[11px] font-semibold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-700">
+                                                        {userRole || 'Role'}
+                                                    </span>
                                                 </div>
+
+                                                {/* Dashboard Link based on Role */}
+                                                <Link
+                                                    to={
+                                                        userRole === 'admin'
+                                                            ? '/user/admin/users'
+                                                            : userRole === 'tutor'
+                                                            ? '/user/tutor/my-application'
+                                                            : '/user/student/my-tution'
+                                                    }
+                                                    onClick={() => setIsProfileOpen(false)}
+                                                    className="w-full block text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-600 font-medium transition-colors"
+                                                >
+                                                    Dashboard
+                                                </Link>
+
                                                 <button
                                                     onClick={handleLogout}
                                                     className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50 font-medium cursor-pointer"
