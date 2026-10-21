@@ -15,30 +15,48 @@ export default function AuthProvider({ children }) {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser)
-            setLoading(false)
+            setUser(currentUser);
+            setLoading(false);
+            if (!currentUser) {
+                setUserRole(null);
+                setUserRoleLoading(false);
+            }
         });
         return () => unsubscribe();
-    }, [])
+    }, []);
 
     useEffect(() => {
+        let isMounted = true;
         if (user) {
-            axios.get(`${import.meta.env.VITE_API_URL}/api/user/role-check`, {
-                headers: {
-                    Authorization: `Bearer ${user?.accessToken}`
-                }
-            }).then(response => {
-                if (response?.data?.success) {
-                    setUserRole(response?.data?.data?.role ?? 'user')
-                } else {
-                    setUserRole(null)
-                }
-                setUserRoleLoading(false)
-            }).catch(error => {
-                setUserRoleLoading(false)
-            })
+            setUserRoleLoading(true);
+            user.getIdToken()
+                .then(token => {
+                    return axios.get(`${import.meta.env.VITE_API_URL}/api/user/role-check`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                })
+                .then(response => {
+                    if (!isMounted) return;
+                    if (response?.data?.success) {
+                        setUserRole(response?.data?.data?.role ?? 'user');
+                    } else {
+                        setUserRole(null);
+                    }
+                    setUserRoleLoading(false);
+                })
+                .catch(error => {
+                    if (!isMounted) return;
+                    console.error("Role check failed:", error);
+                    setUserRole(null);
+                    setUserRoleLoading(false);
+                });
         }
-    }, [user])
+        return () => {
+            isMounted = false;
+        };
+    }, [user]);
 
     const registerUser = async (fullName, email, password) => {
         try {
